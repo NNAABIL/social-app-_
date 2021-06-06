@@ -1,0 +1,155 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social/app_layout/app_cubit/app_cubit.dart';
+import 'package:social/app_layout/app_cubit/app_states.dart';
+import 'package:social/helper/componants.dart';
+import 'package:social/helper/icon_broken.dart';
+
+class NewPostScreen extends StatelessWidget {
+
+  final textController = TextEditingController();
+
+
+  @override
+  Widget build(BuildContext context) {
+    return  BlocConsumer<AppCubit, AppState>(
+      listener: (context, state) {},
+      builder: (context, state) {
+       var cubit =AppCubit.get(context);
+        return Scaffold(
+          appBar: defaultAppBar(
+            context: context,
+            title: 'Create Post',
+            actions: [
+              defaultTextButton(
+                function: ()
+                {
+                  var now = DateTime.now();
+                  if(cubit.postImage==null){
+                    cubit.createNewPost(text: textController.text,dateTime: now.toString());
+                  }else{
+                    cubit.uploadPostImage(text: textController.text,dateTime: now.toString(),);
+                  }
+                },
+                text: 'Post',
+              ),
+            ],
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              children: [
+                if(state is CreatePostLoadingState)
+                  LinearProgressIndicator(),
+                if(state is CreatePostLoadingState)
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 25.0,
+                      backgroundImage: NetworkImage(
+                        'https://image.freepik.com/free-photo/skeptical-woman-has-unsure-questioned-expression-points-fingers-sideways_273609-40770.jpg',
+                      ),
+                    ),
+                    SizedBox(
+                      width: 15.0,
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Mohamed Nabil',
+                        style: TextStyle(
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: TextFormField(
+                    controller: textController,
+                    decoration: InputDecoration(
+                      hintText: 'what is on your mind ...',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                  if(cubit.postImage!=null)
+                  Stack(
+                    alignment: AlignmentDirectional.topEnd,
+                    children: [
+                      Container(
+                        height: 140.0,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4.0,),
+                          image: DecorationImage(
+                            image: FileImage(cubit.postImage),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: CircleAvatar(
+                          radius: 20.0,
+                          child: Icon(
+                            Icons.close,
+                            size: 16.0,
+                          ),
+                        ),
+                        onPressed: ()
+                        {
+                          cubit.removePostImage();
+                        },
+                      ),
+                    ],
+                  ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextButton(
+                        onPressed: ()
+                        {
+                          cubit.getPostImage();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              IconBroken.Image,
+                            ),
+                            SizedBox(
+                              width: 5.0,
+                            ),
+                            Text(
+                              'add photo',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: TextButton(
+                        onPressed: () {},
+                        child: Text(
+                          '# tags',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
